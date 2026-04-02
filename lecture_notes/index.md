@@ -6,7 +6,7 @@ permalink: /lecture_notes/
 
 # Lecture notes (by chapter)
 
-Top-level folders under `lecture_notes/` whose names begin with `chapter`, and every file under each (including nested folders).
+Top-level folders under `lecture_notes/` whose names begin with `chapter`, and every file under each (including nested folders), except anything under a `prebaked/` directory: those folders are linked as a whole instead of listing each file.
 
 {% assign raw_folders = '' %}
 {% for file in site.static_files %}
@@ -46,7 +46,6 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
 {% assign chapnum = folder | remove_first: 'chapter' %}
 {% assign heading = 'Chapter ' | append: chapnum %}
 {% endif %}
-## {{ heading }}
 
 {% assign file_lines = '' %}
 {% for file in site.static_files %}
@@ -57,9 +56,43 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% endif %}
 {% endfor %}
 {% assign sorted_files = file_lines | split: '@@@' | uniq | sort %}
+{% assign chap_prefix = 'lecture_notes/' | append: folder | append: '/' %}
+
+{% assign visible_lines = '' %}
+{% for rel in sorted_files %}
+{% unless rel == blank %}
+  {% unless rel contains '/prebaked/' %}
+    {% assign visible_lines = visible_lines | append: rel | append: '@@@' %}
+  {% endunless %}
+{% endunless %}
+{% endfor %}
+{% assign sorted_visible = visible_lines | split: '@@@' | uniq | sort %}
+
+{% assign prebaked_roots_raw = '' %}
+{% assign has_prebaked = false %}
+{% for rel in sorted_files %}
+{% unless rel == blank %}
+  {% if rel contains '/prebaked/' %}
+    {% assign rp = rel | split: '/prebaked/' %}
+    {% assign rpn = rp | size %}
+    {% if rpn > 1 %}
+      {% assign root = rp[0] | append: '/prebaked' %}
+      {% assign has_prebaked = true %}
+      {% assign prebaked_roots_raw = prebaked_roots_raw | append: root | append: '@@@' %}
+    {% endif %}
+  {% endif %}
+{% endunless %}
+{% endfor %}
+{% assign prebaked_roots = prebaked_roots_raw | split: '@@@' | uniq | sort %}
+
+{% if has_prebaked %}
+## {{ heading }} ({% assign pb_first = true %}{% for root in prebaked_roots %}{% unless root == blank %}{% assign plink = '/' | append: root | append: '/' %}{% unless pb_first %}, {% endunless %}<a href="{{ plink | relative_url }}">{% if pb_first %}prebaked{% else %}{{ root | remove_first: chap_prefix | append: '/' }}{% endif %}</a>{% assign pb_first = false %}{% endunless %}{% endfor %})
+{% else %}
+## {{ heading }}
+{% endif %}
 
 {% assign gkey_raw = '' %}
-{% for rel in sorted_files %}
+{% for rel in sorted_visible %}
 {% unless rel == blank %}
   {% assign bn = rel | split: '/' | last %}
   {% assign ep = bn | split: '.' %}
@@ -127,7 +160,7 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
 {% for gk in group_list %}
 {% unless gk == blank %}
 {% assign nmatch = 0 %}
-{% for rel in sorted_files %}
+{% for rel in sorted_visible %}
 {% unless rel == blank %}
   {% assign bn = rel | split: '/' | last %}
   {% assign ep = bn | split: '.' %}
@@ -212,7 +245,7 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
 ### {{ gtitle }}
 
 <ul>
-{% for rel in sorted_files %}
+{% for rel in sorted_visible %}
 {% unless rel == blank %}
   {% assign bn = rel | split: '/' | last %}
   {% assign ep = bn | split: '.' %}
