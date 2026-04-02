@@ -185,7 +185,42 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% if fgk == gk %}
   {% assign prefix = 'lecture_notes/' | append: folder | append: '/' %}
   {% assign display = rel | remove_first: prefix %}
+  {% assign spp = bn | split: '_sol.' %}
+  {% assign sppsz = spp | size %}
+  {% assign skip_li = false %}
+  {% if sppsz == 2 %}
+    {% assign base_bn = spp[0] | append: '.' | append: spp[1] %}
+    {% assign base_rel = rel | replace: bn, base_bn %}
+    {% if sorted_visible contains base_rel %}
+      {% assign skip_li = true %}
+    {% endif %}
+  {% endif %}
+  {% unless skip_li %}
+    {% if sppsz == 2 %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+    {% else %}
+  {% assign dp = bn | split: '.' %}
+  {% assign fextn = dp | last %}
+  {% assign stem = '' %}
+  {% for p in dp %}
+    {% if forloop.last %}
+    {% else %}
+      {% if stem == '' %}
+        {% assign stem = p %}
+      {% else %}
+        {% assign stem = stem | append: '.' | append: p %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+  {% assign sol_bn = stem | append: '_sol.' | append: fextn %}
+  {% assign sol_rel = rel | replace: bn, sol_bn %}
+  {% if sorted_visible contains sol_rel %}
+  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel | relative_url }}">solution</a>)</li>
+  {% else %}
+  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+  {% endif %}
+    {% endif %}
+  {% endunless %}
   {% endif %}
 {% endunless %}
 {% endfor %}
