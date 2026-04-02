@@ -6,8 +6,6 @@ permalink: /lecture_notes/
 
 # Lecture notes (by chapter)
 
-Top-level folders under `lecture_notes/` whose names begin with `chapter`, and every file under each (including nested folders), except anything under a `prebaked/` directory: those folders are linked as a whole instead of listing each file.
-
 <style>
 .lecture-notes-row { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: flex-start; margin: 0.75rem 0 1rem; }
 .lecture-notes-col { flex: 1 1 12rem; min-width: 0; }
