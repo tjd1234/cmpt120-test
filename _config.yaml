@@ -2,5 +2,10 @@ remote_theme: pages-themes/slate@v0.2.0
 title: SFU CMPT 120 Spring 2026
 show_downloads: true
 
+# Prefix for GitHub blob URLs (no trailing slash). .ipynb and .py links in lecture_notes
+# use this so they open in GitHub’s viewer instead of raw Pages URLs. Must match the
+# branch you publish from (often main).
+github_blob_base: https://github.com/tjd1234/cmpt120-test/blob/main
+
 plugins:
   - jekyll-remote-theme

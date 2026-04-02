@@ -1,0 +1,14 @@
+{%- assign _p = include.path -%}
+{%- assign _last = _p | split: '/' | last -%}
+{%- assign _ep = _last | split: '.' -%}
+{%- assign _ext = _ep | last | downcase -%}
+{%- assign _blob = site.github_blob_base | default: '' | strip -%}
+{%- if _ext == 'ipynb' or _ext == 'py' -%}
+{%- if _blob != '' -%}
+{{- _blob -}}/{{- _p -}}
+{%- else -%}
+{{- '/' | append: _p | relative_url -}}
+{%- endif -%}
+{%- else -%}
+{{- '/' | append: _p | relative_url -}}
+{%- endif -%}
