@@ -209,14 +209,8 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% if stpsz == 2 %}
   {% assign sol_bn_from_start = stsp[0] | append: '_sol.' | append: stsp[1] %}
   {% assign sol_rel_from_start = rel | replace: bn, sol_bn_from_start %}
-  {% assign base_plain_bn = stsp[0] | append: '.' | append: stsp[1] %}
-  {% assign base_plain_rel = rel | replace: bn, base_plain_bn %}
   {% if sorted_visible contains sol_rel_from_start %}
-    {% if sorted_visible contains base_plain_rel %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
-    {% else %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel_from_start | relative_url }}">solution</a>)</li>
-    {% endif %}
   {% else %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
   {% endif %}
@@ -236,8 +230,14 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% endfor %}
   {% assign sol_bn = stem | append: '_sol.' | append: fextn %}
   {% assign sol_rel = rel | replace: bn, sol_bn %}
+  {% assign start_bn = stem | append: '_start.' | append: fextn %}
+  {% assign start_rel = rel | replace: bn, start_bn %}
   {% if sorted_visible contains sol_rel %}
+    {% if sorted_visible contains start_rel %}
+  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+    {% else %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel | relative_url }}">solution</a>)</li>
+    {% endif %}
   {% else %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
   {% endif %}
