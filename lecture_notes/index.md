@@ -91,11 +91,7 @@ permalink: /lecture_notes/
 {% endfor %}
 {% assign prebaked_roots = prebaked_roots_raw | split: '@@@' | uniq | sort %}
 
-{% if has_prebaked %}
-## {{ heading }} ({% assign pb_first = true %}{% for root in prebaked_roots %}{% unless root == blank %}{% assign plink = '/' | append: root | append: '/' %}{% unless pb_first %}, {% endunless %}<a href="{{ plink | relative_url }}">{% if pb_first %}prebaked{% else %}{{ root | remove_first: chap_prefix | append: '/' }}{% endif %}</a>{% assign pb_first = false %}{% endunless %}{% endfor %})
-{% else %}
 ## {{ heading }}
-{% endif %}
 
 {% assign main_gkeys = 'notebooks|||py|||powerpoint' | split: '|||' %}
 {% assign row_opened = false %}
@@ -167,7 +163,7 @@ permalink: /lecture_notes/
   {% endif %}
 {% endunless %}
 {% endfor %}
-{% if nmatch > 0 %}
+{% if nmatch > 0 or has_prebaked %}
 <div class="lecture-notes-other">
 {% include lecture_notes_group.html %}
 </div>

@@ -216,4 +216,14 @@
 {% if cl_buf != '' %}
 <li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% endif %}
+{% if gk == 'other' and has_prebaked %}
+{% assign pb_first = true %}
+{% for root in prebaked_roots %}
+{% unless root == blank %}
+{% assign plink = '/' | append: root | append: '/' %}
+<li><a href="{{ plink | relative_url }}">{% if pb_first %}prebaked folder{% else %}{{ root | remove_first: sec_prefix | append: '/' }}{% endif %}</a></li>
+{% assign pb_first = false %}
+{% endunless %}
+{% endfor %}
+{% endif %}
 </ul>
