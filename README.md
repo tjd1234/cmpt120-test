@@ -41,7 +41,7 @@ practice evaluating boolean expressions.
 
 ## Lecture Notes (Spring 2026)
 
-See the [lecture notes index](lecture_notes/index.md) for a browsable list of materials by chapter ([course site](https://tjd1234.github.io/cmpt120-test/lecture_notes/)).
+See the [lecture notes index](lecture_notes/) for a browsable list of materials by chapter ([course site](https://tjd1234.github.io/cmpt120-test/lecture_notes/)).
 
 Links to **`.ipynb`** and **`.py`** files below use `https://github.com/tjd1234/cmpt120-test/blob/main/…` so they open in GitHub’s viewer (same idea as the generated links on the index page). Relative links would hit the course site and often download or show raw content instead.
 
