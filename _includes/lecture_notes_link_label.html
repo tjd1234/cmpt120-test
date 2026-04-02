@@ -1,0 +1,15 @@
+{%- assign t = include.path | remove_first: sec_prefix -%}
+{%- assign last = t | split: '/' | last -%}
+{%- assign parts = last | split: '.' -%}
+{%- assign n = parts | size -%}
+{%- if n >= 2 -%}
+{%- assign ext = parts | last | downcase -%}
+{%- if ext == 'ipynb' -%}
+{%- assign t = t | replace: '.ipynb', '' -%}
+{%- elsif ext == 'pptx' -%}
+{%- assign t = t | replace: '.pptx', '' -%}
+{%- elsif ext == 'ppt' -%}
+{%- assign t = t | replace: '.ppt', '' -%}
+{%- endif -%}
+{%- endif -%}
+{{- t -}}

@@ -53,16 +53,16 @@
   {% unless skip_li %}
     {% if sppsz == 2 %}
       {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
       {% endif %}
       {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% assign cl_buf = '' %}
 {% assign cl_key = '' %}
       {% endif %}
-<li><a href="{% include lecture_notes_file_href.html path=rel %}">{{ display }}</a></li>
+<li><a href="{% include lecture_notes_file_href.html path=rel %}">{% include lecture_notes_link_label.html path=rel %}</a></li>
     {% else %}
   {% assign stsp = bn | split: '_start.' %}
   {% assign stpsz = stsp | size %}
@@ -71,28 +71,28 @@
   {% assign sol_rel_from_start = rel | replace: bn, sol_bn_from_start %}
   {% if sorted_visible contains sol_rel_from_start %}
       {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
       {% endif %}
       {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% assign cl_buf = '' %}
 {% assign cl_key = '' %}
       {% endif %}
-<li><a href="{% include lecture_notes_file_href.html path=rel %}">{{ display }}</a> (<a href="{% include lecture_notes_file_href.html path=sol_rel_from_start %}">solution</a>)</li>
+<li><a href="{% include lecture_notes_file_href.html path=rel %}">{% include lecture_notes_link_label.html path=rel %}</a> (<a href="{% include lecture_notes_file_href.html path=sol_rel_from_start %}">solution</a>)</li>
   {% else %}
       {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
       {% endif %}
       {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% assign cl_buf = '' %}
 {% assign cl_key = '' %}
       {% endif %}
-<li><a href="{% include lecture_notes_file_href.html path=rel %}">{{ display }}</a></li>
+<li><a href="{% include lecture_notes_file_href.html path=rel %}">{% include lecture_notes_link_label.html path=rel %}</a></li>
   {% endif %}
   {% else %}
   {% assign dp = bn | split: '.' %}
@@ -139,12 +139,12 @@
   {% if sorted_visible contains sol_rel %}
     {% if sorted_visible contains start_rel %}
       {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
       {% endif %}
       {% if cl_buf != '' and cl_key != this_ck %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% assign cl_buf = '' %}
 {% assign cl_key = '' %}
       {% endif %}
@@ -154,18 +154,18 @@
       {% elsif cl_key == this_ck %}
         {% assign cl_buf = cl_buf | append: rel | append: '@@@' %}
       {% else %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
         {% assign cl_key = this_ck %}
         {% assign cl_buf = rel | append: '@@@' %}
       {% endif %}
     {% else %}
       {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% assign cl_buf = '' %}
 {% assign cl_key = '' %}
       {% endif %}
       {% if pair_buf != '' and pair_key != this_ck %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
       {% endif %}
@@ -175,19 +175,19 @@
       {% elsif pair_key == this_ck %}
         {% assign pair_buf = pair_buf | append: rel | append: '###' | append: sol_rel | append: '@@@' %}
       {% else %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
         {% assign pair_key = this_ck %}
         {% assign pair_buf = rel | append: '###' | append: sol_rel | append: '@@@' %}
       {% endif %}
     {% endif %}
   {% else %}
     {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
     {% endif %}
     {% if cl_buf != '' and cl_key != this_ck %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% assign cl_buf = '' %}
 {% assign cl_key = '' %}
     {% endif %}
@@ -197,7 +197,7 @@
     {% elsif cl_key == this_ck %}
       {% assign cl_buf = cl_buf | append: rel | append: '@@@' %}
     {% else %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
       {% assign cl_key = this_ck %}
       {% assign cl_buf = rel | append: '@@@' %}
     {% endif %}
@@ -209,11 +209,11 @@
 {% endunless %}
 {% endfor %}
 {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{% include lecture_notes_file_href.html path=prel %}">{% include lecture_notes_link_label.html path=prel %}</a> (<a href="{% include lecture_notes_file_href.html path=psol %}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
 {% assign pair_buf = '' %}
 {% assign pair_key = '' %}
 {% endif %}
 {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{% include lecture_notes_file_href.html path=cr %}">{% include lecture_notes_link_label.html path=cr %}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
 {% endif %}
 </ul>
