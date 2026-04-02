@@ -163,6 +163,9 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
 ### {{ gtitle }}
 
 <ul>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+{% assign sec_prefix = 'lecture_notes/' | append: folder | append: '/' %}
 {% for rel in sorted_visible %}
 {% unless rel == blank %}
   {% assign bn = rel | split: '/' | last %}
@@ -183,8 +186,7 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
     {% assign fgk = 'other' %}
   {% endif %}
   {% if fgk == gk %}
-  {% assign prefix = 'lecture_notes/' | append: folder | append: '/' %}
-  {% assign display = rel | remove_first: prefix %}
+  {% assign display = rel | remove_first: sec_prefix %}
   {% assign spp = bn | split: '_sol.' %}
   {% assign sppsz = spp | size %}
   {% assign skip_li = false %}
@@ -202,7 +204,12 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% endif %}
   {% unless skip_li %}
     {% if sppsz == 2 %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+      {% if cl_buf != '' %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+      {% endif %}
+<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
     {% else %}
   {% assign stsp = bn | split: '_start.' %}
   {% assign stpsz = stsp | size %}
@@ -210,9 +217,19 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% assign sol_bn_from_start = stsp[0] | append: '_sol.' | append: stsp[1] %}
   {% assign sol_rel_from_start = rel | replace: bn, sol_bn_from_start %}
   {% if sorted_visible contains sol_rel_from_start %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel_from_start | relative_url }}">solution</a>)</li>
+      {% if cl_buf != '' %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+      {% endif %}
+<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel_from_start | relative_url }}">solution</a>)</li>
   {% else %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+      {% if cl_buf != '' %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+      {% endif %}
+<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
   {% endif %}
   {% else %}
   {% assign dp = bn | split: '.' %}
@@ -228,18 +245,75 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
       {% endif %}
     {% endif %}
   {% endfor %}
+  {% if stem contains '_by_' %}
+    {% assign byparts = stem | split: '_by_' %}
+    {% assign pfx = byparts | first %}
+  {% else %}
+    {% assign pfx = stem %}
+    {% for _n in (1..40) %}
+      {% assign psz = pfx | size %}
+      {% if psz < 1 %}
+        {% break %}
+      {% endif %}
+      {% assign lix = psz | minus: 1 %}
+      {% assign lc = pfx | slice: lix, 1 %}
+      {% if lc == '0' or lc == '1' or lc == '2' or lc == '3' or lc == '4' or lc == '5' or lc == '6' or lc == '7' or lc == '8' or lc == '9' %}
+        {% assign pfx = pfx | slice: 0, lix %}
+      {% else %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% assign this_ck = bn %}
+  {% assign pfxsz = pfx | size %}
+  {% if pfxsz >= 3 %}
+    {% assign this_ck = pfx | append: '|' | append: fextn %}
+  {% endif %}
   {% assign sol_bn = stem | append: '_sol.' | append: fextn %}
   {% assign sol_rel = rel | replace: bn, sol_bn %}
   {% assign start_bn = stem | append: '_start.' | append: fextn %}
   {% assign start_rel = rel | replace: bn, start_bn %}
   {% if sorted_visible contains sol_rel %}
     {% if sorted_visible contains start_rel %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+      {% if cl_buf != '' and cl_key != this_ck %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+      {% endif %}
+      {% if cl_buf == '' %}
+        {% assign cl_key = this_ck %}
+        {% assign cl_buf = rel | append: '@@@' %}
+      {% elsif cl_key == this_ck %}
+        {% assign cl_buf = cl_buf | append: rel | append: '@@@' %}
+      {% else %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+        {% assign cl_key = this_ck %}
+        {% assign cl_buf = rel | append: '@@@' %}
+      {% endif %}
     {% else %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel | relative_url }}">solution</a>)</li>
+      {% if cl_buf != '' %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+      {% endif %}
+<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel | relative_url }}">solution</a>)</li>
     {% endif %}
   {% else %}
-  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+    {% if cl_buf != '' and cl_key != this_ck %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% assign cl_buf = '' %}
+{% assign cl_key = '' %}
+    {% endif %}
+    {% if cl_buf == '' %}
+      {% assign cl_key = this_ck %}
+      {% assign cl_buf = rel | append: '@@@' %}
+    {% elsif cl_key == this_ck %}
+      {% assign cl_buf = cl_buf | append: rel | append: '@@@' %}
+    {% else %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+      {% assign cl_key = this_ck %}
+      {% assign cl_buf = rel | append: '@@@' %}
+    {% endif %}
   {% endif %}
   {% endif %}
     {% endif %}
@@ -247,6 +321,9 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% endif %}
 {% endunless %}
 {% endfor %}
+{% if cl_buf != '' %}
+<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
+{% endif %}
 </ul>
 
 {% endif %}
