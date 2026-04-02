@@ -191,7 +191,12 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% if sppsz == 2 %}
     {% assign base_bn = spp[0] | append: '.' | append: spp[1] %}
     {% assign base_rel = rel | replace: bn, base_bn %}
+    {% assign base_start_bn = spp[0] | append: '_start.' | append: spp[1] %}
+    {% assign base_start_rel = rel | replace: bn, base_start_bn %}
     {% if sorted_visible contains base_rel %}
+      {% assign skip_li = true %}
+    {% endif %}
+    {% if sorted_visible contains base_start_rel %}
       {% assign skip_li = true %}
     {% endif %}
   {% endif %}
@@ -199,6 +204,23 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
     {% if sppsz == 2 %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
     {% else %}
+  {% assign stsp = bn | split: '_start.' %}
+  {% assign stpsz = stsp | size %}
+  {% if stpsz == 2 %}
+  {% assign sol_bn_from_start = stsp[0] | append: '_sol.' | append: stsp[1] %}
+  {% assign sol_rel_from_start = rel | replace: bn, sol_bn_from_start %}
+  {% assign base_plain_bn = stsp[0] | append: '.' | append: stsp[1] %}
+  {% assign base_plain_rel = rel | replace: bn, base_plain_bn %}
+  {% if sorted_visible contains sol_rel_from_start %}
+    {% if sorted_visible contains base_plain_rel %}
+  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+    {% else %}
+  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel_from_start | relative_url }}">solution</a>)</li>
+    {% endif %}
+  {% else %}
+  <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+  {% endif %}
+  {% else %}
   {% assign dp = bn | split: '.' %}
   {% assign fextn = dp | last %}
   {% assign stem = '' %}
@@ -218,6 +240,7 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel | relative_url }}">solution</a>)</li>
   {% else %}
   <li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
+  {% endif %}
   {% endif %}
     {% endif %}
   {% endunless %}
