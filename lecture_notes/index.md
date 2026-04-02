@@ -8,6 +8,17 @@ permalink: /lecture_notes/
 
 Top-level folders under `lecture_notes/` whose names begin with `chapter`, and every file under each (including nested folders), except anything under a `prebaked/` directory: those folders are linked as a whole instead of listing each file.
 
+<style>
+.lecture-notes-row { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; align-items: flex-start; margin: 0.75rem 0 1rem; }
+.lecture-notes-col { flex: 1 1 12rem; min-width: 0; }
+.lecture-notes-col .lecture-notes-group-heading { margin-top: 0; font-size: 1.1em; }
+.lecture-notes-other { margin-top: 0.5rem; clear: both; }
+.lecture-notes-other .lecture-notes-group-heading { font-size: 1.1em; }
+@media (max-width: 42rem) {
+  .lecture-notes-row { flex-direction: column; }
+}
+</style>
+
 {% assign raw_folders = '' %}
 {% for file in site.static_files %}
   {% assign rel = file.path | remove_first: '/' %}
@@ -34,8 +45,6 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
   {% assign ordered_raw = ordered_raw | append: 'chapter_algorithms' | append: '@@@' %}
 {% endif %}
 {% assign chapter_dirs_ordered = ordered_raw | split: '@@@' %}
-
-{% assign gkey_order = 'notebooks|||py|||powerpoint|||other' | split: '|||' %}
 
 {% for folder in chapter_dirs_ordered %}
 {% unless folder == blank %}
@@ -90,40 +99,9 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
 ## {{ heading }}
 {% endif %}
 
-{% assign gkey_raw = '' %}
-{% for rel in sorted_visible %}
-{% unless rel == blank %}
-  {% assign bn = rel | split: '/' | last %}
-  {% assign ep = bn | split: '.' %}
-  {% assign epn = ep | size %}
-  {% if epn > 1 %}
-    {% assign fext = ep | last | downcase %}
-  {% else %}
-    {% assign fext = '_none_' %}
-  {% endif %}
-  {% if fext == 'ipynb' %}
-    {% assign gk = 'notebooks' %}
-  {% elsif fext == 'py' %}
-    {% assign gk = 'py' %}
-  {% elsif fext == 'pptx' or fext == 'ppt' %}
-    {% assign gk = 'powerpoint' %}
-  {% else %}
-    {% assign gk = 'other' %}
-  {% endif %}
-  {% assign gkey_raw = gkey_raw | append: gk | append: '|||' %}
-{% endunless %}
-{% endfor %}
-{% assign gkey_uniq = gkey_raw | split: '|||' | uniq %}
-
-{% assign sorted_gkeys = '' %}
-{% for gk in gkey_order %}
-  {% if gkey_uniq contains gk %}
-    {% assign sorted_gkeys = sorted_gkeys | append: gk | append: '|||' %}
-  {% endif %}
-{% endfor %}
-{% assign group_list = sorted_gkeys | split: '|||' %}
-
-{% for gk in group_list %}
+{% assign main_gkeys = 'notebooks|||py|||powerpoint' | split: '|||' %}
+{% assign row_opened = false %}
+{% for gk in main_gkeys %}
 {% unless gk == blank %}
 {% assign nmatch = 0 %}
 {% for rel in sorted_visible %}
@@ -151,23 +129,22 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
 {% endunless %}
 {% endfor %}
 {% if nmatch > 0 %}
-{% if gk == 'notebooks' %}
-{% assign gtitle = 'Notebooks' %}
-{% elsif gk == 'py' %}
-{% assign gtitle = 'Python' %}
-{% elsif gk == 'powerpoint' %}
-{% assign gtitle = 'PowerPoint' %}
-{% else %}
-{% assign gtitle = 'Other' %}
+  {% unless row_opened %}
+<div class="lecture-notes-row">
+  {% assign row_opened = true %}
+  {% endunless %}
+  <div class="lecture-notes-col">
+  {% include lecture_notes_group.html %}
+  </div>
 {% endif %}
-### {{ gtitle }}
+{% endunless %}
+{% endfor %}
+{% if row_opened %}
+</div>
+{% endif %}
 
-<ul>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-{% assign sec_prefix = 'lecture_notes/' | append: folder | append: '/' %}
+{% assign gk = 'other' %}
+{% assign nmatch = 0 %}
 {% for rel in sorted_visible %}
 {% unless rel == blank %}
   {% assign bn = rel | split: '/' | last %}
@@ -188,193 +165,15 @@ Top-level folders under `lecture_notes/` whose names begin with `chapter`, and e
     {% assign fgk = 'other' %}
   {% endif %}
   {% if fgk == gk %}
-  {% assign display = rel | remove_first: sec_prefix %}
-  {% assign spp = bn | split: '_sol.' %}
-  {% assign sppsz = spp | size %}
-  {% assign skip_li = false %}
-  {% if sppsz == 2 %}
-    {% assign base_bn = spp[0] | append: '.' | append: spp[1] %}
-    {% assign base_rel = rel | replace: bn, base_bn %}
-    {% assign base_start_bn = spp[0] | append: '_start.' | append: spp[1] %}
-    {% assign base_start_rel = rel | replace: bn, base_start_bn %}
-    {% if sorted_visible contains base_rel %}
-      {% assign skip_li = true %}
-    {% endif %}
-    {% if sorted_visible contains base_start_rel %}
-      {% assign skip_li = true %}
-    {% endif %}
-  {% endif %}
-  {% unless skip_li %}
-    {% if sppsz == 2 %}
-      {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-      {% endif %}
-      {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-      {% endif %}
-<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
-    {% else %}
-  {% assign stsp = bn | split: '_start.' %}
-  {% assign stpsz = stsp | size %}
-  {% if stpsz == 2 %}
-  {% assign sol_bn_from_start = stsp[0] | append: '_sol.' | append: stsp[1] %}
-  {% assign sol_rel_from_start = rel | replace: bn, sol_bn_from_start %}
-  {% if sorted_visible contains sol_rel_from_start %}
-      {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-      {% endif %}
-      {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-      {% endif %}
-<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a> (<a href="{{ '/' | append: sol_rel_from_start | relative_url }}">solution</a>)</li>
-  {% else %}
-      {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-      {% endif %}
-      {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-      {% endif %}
-<li><a href="{{ '/' | append: rel | relative_url }}">{{ display }}</a></li>
-  {% endif %}
-  {% else %}
-  {% assign dp = bn | split: '.' %}
-  {% assign fextn = dp | last %}
-  {% assign stem = '' %}
-  {% for p in dp %}
-    {% if forloop.last %}
-    {% else %}
-      {% if stem == '' %}
-        {% assign stem = p %}
-      {% else %}
-        {% assign stem = stem | append: '.' | append: p %}
-      {% endif %}
-    {% endif %}
-  {% endfor %}
-  {% if stem contains '_by_' %}
-    {% assign byparts = stem | split: '_by_' %}
-    {% assign pfx = byparts | first %}
-  {% else %}
-    {% assign pfx = stem %}
-    {% for _n in (1..40) %}
-      {% assign psz = pfx | size %}
-      {% if psz < 1 %}
-        {% break %}
-      {% endif %}
-      {% assign lix = psz | minus: 1 %}
-      {% assign lc = pfx | slice: lix, 1 %}
-      {% if lc == '0' or lc == '1' or lc == '2' or lc == '3' or lc == '4' or lc == '5' or lc == '6' or lc == '7' or lc == '8' or lc == '9' %}
-        {% assign pfx = pfx | slice: 0, lix %}
-      {% else %}
-        {% break %}
-      {% endif %}
-    {% endfor %}
-  {% endif %}
-  {% assign this_ck = bn %}
-  {% assign pfxsz = pfx | size %}
-  {% if pfxsz >= 3 %}
-    {% assign this_ck = pfx | append: '|' | append: fextn %}
-  {% endif %}
-  {% assign sol_bn = stem | append: '_sol.' | append: fextn %}
-  {% assign sol_rel = rel | replace: bn, sol_bn %}
-  {% assign start_bn = stem | append: '_start.' | append: fextn %}
-  {% assign start_rel = rel | replace: bn, start_bn %}
-  {% if sorted_visible contains sol_rel %}
-    {% if sorted_visible contains start_rel %}
-      {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-      {% endif %}
-      {% if cl_buf != '' and cl_key != this_ck %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-      {% endif %}
-      {% if cl_buf == '' %}
-        {% assign cl_key = this_ck %}
-        {% assign cl_buf = rel | append: '@@@' %}
-      {% elsif cl_key == this_ck %}
-        {% assign cl_buf = cl_buf | append: rel | append: '@@@' %}
-      {% else %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-        {% assign cl_key = this_ck %}
-        {% assign cl_buf = rel | append: '@@@' %}
-      {% endif %}
-    {% else %}
-      {% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-      {% endif %}
-      {% if pair_buf != '' and pair_key != this_ck %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-      {% endif %}
-      {% if pair_buf == '' %}
-        {% assign pair_key = this_ck %}
-        {% assign pair_buf = rel | append: '###' | append: sol_rel | append: '@@@' %}
-      {% elsif pair_key == this_ck %}
-        {% assign pair_buf = pair_buf | append: rel | append: '###' | append: sol_rel | append: '@@@' %}
-      {% else %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-        {% assign pair_key = this_ck %}
-        {% assign pair_buf = rel | append: '###' | append: sol_rel | append: '@@@' %}
-      {% endif %}
-    {% endif %}
-  {% else %}
-    {% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
-    {% endif %}
-    {% if cl_buf != '' and cl_key != this_ck %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% assign cl_buf = '' %}
-{% assign cl_key = '' %}
-    {% endif %}
-    {% if cl_buf == '' %}
-      {% assign cl_key = this_ck %}
-      {% assign cl_buf = rel | append: '@@@' %}
-    {% elsif cl_key == this_ck %}
-      {% assign cl_buf = cl_buf | append: rel | append: '@@@' %}
-    {% else %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-      {% assign cl_key = this_ck %}
-      {% assign cl_buf = rel | append: '@@@' %}
-    {% endif %}
-  {% endif %}
-  {% endif %}
-    {% endif %}
-  {% endunless %}
+    {% assign nmatch = nmatch | plus: 1 %}
   {% endif %}
 {% endunless %}
 {% endfor %}
-{% if pair_buf != '' %}
-<li>{% assign fpr = true %}{% assign psegs = pair_buf | split: '@@@' %}{% for ps in psegs %}{% unless ps == blank %}{% unless fpr %}, {% endunless %}{% assign pp = ps | split: '###' %}{% assign prel = pp[0] %}{% assign psol = pp[1] %}<a href="{{ '/' | append: prel | relative_url }}">{{ prel | remove_first: sec_prefix }}</a> (<a href="{{ '/' | append: psol | relative_url }}">solution</a>){% assign fpr = false %}{% endunless %}{% endfor %}</li>
-{% assign pair_buf = '' %}
-{% assign pair_key = '' %}
+{% if nmatch > 0 %}
+<div class="lecture-notes-other">
+{% include lecture_notes_group.html %}
+</div>
 {% endif %}
-{% if cl_buf != '' %}
-<li>{% assign fc = true %}{% assign bp = cl_buf | split: '@@@' %}{% for cr in bp %}{% unless cr == blank %}{% unless fc %}, {% endunless %}<a href="{{ '/' | append: cr | relative_url }}">{{ cr | remove_first: sec_prefix }}</a>{% assign fc = false %}{% endunless %}{% endfor %}</li>
-{% endif %}
-</ul>
-
-{% endif %}
-{% endunless %}
-{% endfor %}
 
 {% endunless %}
 {% endfor %}
